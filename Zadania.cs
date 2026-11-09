@@ -1,17 +1,4 @@
-﻿
-// Zadanie 5
-List<string> inventory = new List<string> { "miecz", "mikstura", "łuk" };
-
-void Inventory(List<string> inventory)
-{
-    foreach (var item in inventory)
-    {
-        Console.WriteLine(item);
-    }
-}
-
-List<string> longNames = inventory.FindAll(item => item.Length >= 5);
-bool hasSword = inventory.Exists(item => item == "miecz");
+﻿List<string> inventory = new List<string> { "miecz", "mikstura", "łuk" };
 
 string heroName = "Ada";
 int health = 80;
@@ -21,18 +8,14 @@ int strength = 6;
 int weaponDamage = 3;
 bool isRunning = true;
 
-//Zadanie 1
-void ShowMessage(string text) => Console.WriteLine(text);
+// Zadanie 1 & 5
+int CalculateDamage(int strength, int weaponDamage) => strength + weaponDamage;
+int Heal(int health, int amount, int maxHealth) => Math.Min(health + amount, maxHealth);
+bool IsGameOver(int health) => health <= 0;
+bool CanAfford(int gold, int price) => gold >= price;
+int BuyItem(int gold, int price) => gold - price;
 
-int AddGold(int gold, int reward) => gold + reward;
-
-bool HasEnoughGold(int gold, int price) => gold >= price;
-// 1) nie zwraca wartosci a zapisuje wynik
-// 2) true lub false
-// 3) argumentami sa int gold oraz int reward
-// 4) Można użyć dla kupowania rzeczy
-
-//Zadanie 2
+// Zadanie 2
 void ShowPanelTitle(string title, ConsoleColor backgroundColor)
 {
     Console.BackgroundColor = backgroundColor;
@@ -46,7 +29,7 @@ void ShowStatus(string name, int health, int maxHealth, int gold)
     ShowPanelTitle("Status bohatera", ConsoleColor.DarkBlue);
 
     Console.ForegroundColor = ConsoleColor.Cyan;
-    Console.Write("Bohater:  ");
+    Console.Write("Bohater: ");
     Console.ResetColor();
     Console.WriteLine(name);
 
@@ -56,7 +39,7 @@ void ShowStatus(string name, int health, int maxHealth, int gold)
     Console.WriteLine($"{health}/{maxHealth} HP");
 
     Console.ForegroundColor = ConsoleColor.Yellow;
-    Console.Write("Złoto:    ");
+    Console.Write("Złoto:   ");
     Console.ResetColor();
     Console.WriteLine(gold);
 }
@@ -66,42 +49,20 @@ void ShowMenu()
     ShowPanelTitle("Menu", ConsoleColor.DarkCyan);
     Console.WriteLine("[1] Atak treningowy");
     Console.WriteLine("[2] Odpoczynek");
-    Console.WriteLine("[3] Koniec gry");
+    Console.WriteLine("[3] Pokaż ekwipunek");
+    Console.WriteLine("[4] Koniec gry");
+}
+
+void ShowInventory(List<string> items)
+{
+    ShowPanelTitle("Ekwipunek", ConsoleColor.DarkMagenta);
+    foreach (var item in items)
+    {
+        Console.WriteLine($"- {item}");
+    }
 }
 
 // Zadanie 4
-int CalculateDamage(int strength, int weaponDamage) => strength + weaponDamage;
-
-int Heal(int health, int amount, int maxHealth)
-{
-    if (health + amount <= maxHealth)
-    {
-        health += amount;
-        Console.WriteLine($"Dostajesz {amount} HP");
-        return health;
-    }
-    else
-    {
-        health = maxHealth;
-        Console.WriteLine($"Masz {maxHealth} HP");
-        return health;
-    }
-}
-
-bool IsGameOver(int health)
-{
-    if (health <= 0)
-    {
-        Console.WriteLine("Koniec gry");
-        return isRunning = false;
-    }
-    else
-    {
-        Console.WriteLine("Nie");
-        return isRunning;
-    }
-}
-
 string ReadCommand()
 {
     while (true)
@@ -109,28 +70,22 @@ string ReadCommand()
         Console.Write("Wybór: ");
         string? command = Console.ReadLine();
 
-        switch (command)
+        if (command == "1" || command == "2" || command == "3" || command == "4")
         {
-            case "1":
-                return "1";
-            case "2":
-                return "2";
-            case "3":
-                return "3";
-            case "4":
-                return "4";
-            default:
-                Console.WriteLine("Nie poprawna komenda");
-                break;
+            return command;
         }
+
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Niepoprawna komenda. Wybierz 1, 2, 3 lub 4.");
+        Console.ResetColor();
     }
 }
 
+// Zadanie 6
 while (isRunning)
 {
     ShowStatus(heroName, health, maxHealth, gold);
     ShowMenu();
-    // Zadanie 3
     string command = ReadCommand();
 
     if (command == "1")
@@ -141,15 +96,22 @@ while (isRunning)
     else if (command == "2")
     {
         health = Heal(health, 10, maxHealth);
-        Console.WriteLine($"Odpoczywasz. Masz teraz {health} HP.");
+        Console.WriteLine($"Odpoczywasz. Masz teraz {health}/{maxHealth} HP.");
     }
     else if (command == "3")
     {
-        IsGameOver(health);
+        ShowInventory(inventory);
     }
     else if (command == "4")
     {
-        Inventory(inventory);
+        isRunning = false;
+        Console.WriteLine("Do zobaczenia, poszukiwaczu przygód!");
+    }
+
+    if (IsGameOver(health))
+    {
+        Console.WriteLine("Bohater poległ!");
+        isRunning = false;
     }
 }
 
@@ -158,7 +120,7 @@ while (isRunning)
 A)
 int Heal(int health, int amount) => health + amount;
 Heal(health, 10);
-Problem w tym że health jest stringiem a musi być liczbą
+Problem w tym że Heal nie zapisuje sie w health
 B)
 if (health < 20)
 {
@@ -182,4 +144,3 @@ bool CanHeal(int health, int maxHealth, int potions) =>
 Nic nie dostaniemy oprócz znaczenia true w przypadku jeżeli zdrowie mniejsze od Max i jeżeli mamy chociaz hp oraz potion większe od 0
 
 */
-// Dokończyć wdomu
